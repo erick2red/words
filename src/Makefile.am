@@ -9,17 +9,42 @@ AM_CPPFLAGS = \
 	$(NULL)
 
 AM_VALAFLAGS = \
-	--vapidir=$(srcdir)/../vapi --pkg config \
+	--vapidir=$(srcdir)/../vapi --pkg config --pkg custom \
 	@WORDS_PACKAGES@ \
 	$(NULL)
 
 bin_PROGRAMS = gnome-words
 
-gnome_words_SOURCES = \
+vala_sources = \
 	words-app.vala \
 	main.vala \
 	$(NULL)
 
+gsettingsschema_in_files = org.gnome.words.gschema.xml.in
+gsettings_SCHEMAS = $(gsettingsschema_in_files:.xml.in=.xml)
+.PRECIOUS: $(gsettings_SCHEMAS)
+
+@INTLTOOL_XML_NOMERGE_RULE@
+
+@GSETTINGS_RULES@
+
+word-resources.c: words.gresource.xml app-menu.ui
+	$(AM_V_GEN) $(GLIB_COMPILE_RESOURCES) $(srcdir)/words.gresource.xml \
+		--target=$@ --sourcedir=$(srcdir) --c-name words --generate-source
+
+gnome_words_SOURCES = \
+	word-resources.c \
+	$(vala_sources) \
+	$(NULL)
+
 gnome_words_LDADD = $(WORDS_LIBS)
 
-CLEANFILES = *.h *.c *.vapi *.stamp
+CLEANFILES = \
+	$(vala_sources:.vala=.c) \
+	$(gsettings_SCHEMAS) \
+	*.vapi *.stamp
+
+EXTRA_DIST = \
+	words.gresource.xml \
+	$(gsettingsschema_in_files)     \
+        $(NULL)

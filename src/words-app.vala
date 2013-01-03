@@ -19,10 +19,74 @@
 
 using Gtk;
 
-public class Words.App : Window {
+public class Words.App : Gtk.Application {
+  public static App app;
+  public GLib.Settings settings;
+  public Window window;
+
+  private static string word = null;
+  private static const OptionEntry[] options = {
+    { "word", 'w', 0, OptionArg.STRING, ref word,
+      N_("Search word"), null },
+    { null }
+  };
+
+  private void create_window () {
+    var action = new GLib.SimpleAction ("quit", null);
+    action.activate.connect (() => { window.destroy (); });
+    this.add_action (action);
+
+    var builder = new Builder ();
+    builder.set_translation_domain (Config.GETTEXT_PACKAGE);
+    try {
+      Gtk.my_builder_add_from_resource (builder, "/org/gnome/words/app-menu.ui");
+      set_app_menu ((MenuModel)builder.get_object ("app-menu"));
+    } catch {
+      warning ("Failed to parsing ui file");
+    }
+
+    window = new Window (WindowType.TOPLEVEL);
+    window.set_application (this);
+    window.set_title (_("Words"));
+    window.set_default_size (400, 600);
+  }
+
   public App() {
-    set_title (_("Words"));
-    set_default_size (300, 200);
-    this.destroy.connect (Gtk.main_quit);
+    Object (application_id: "org.gnome.Words", flags: ApplicationFlags.HANDLES_COMMAND_LINE);
+    app = this;
+    settings = new GLib.Settings ("org.gnome.words");
+  }
+
+  public override void activate () {
+    if (window == null)
+      create_window ();
+
+    window.present ();
+  }
+
+  public override int command_line (ApplicationCommandLine command_line) {
+    var args = command_line.get_arguments ();
+    unowned string[] _args = args;
+    var context = new OptionContext (N_("— dictionary"));
+    context.add_main_entries (options, Config.GETTEXT_PACKAGE);
+    context.set_translation_domain (Config.GETTEXT_PACKAGE);
+    context.add_group (Gtk.get_option_group (true));
+
+    word = null;
+
+    try {
+      context.parse (ref _args);
+    } catch (Error e) {
+      printerr ("Unable to parse: %s\n", e.message);
+      return 1;
+    }
+
+    activate ();
+
+    if (word != null) {
+      stdout.printf ("Will match the word: %s", word);
+    }
+
+    return 0;
   }
 }

@@ -29,9 +29,8 @@ main (string[] args) {
   Gtk.init (ref args);
 
   var app = new App ();
-  app.show ();
-
-  Gtk.main ();
+  app.run (args);
+  app = null;
 
   return 0;
 }
