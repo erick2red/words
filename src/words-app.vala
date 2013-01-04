@@ -24,6 +24,9 @@ public class Words.App : Gtk.Application {
   public GLib.Settings settings;
   public ApplicationWindow window;
 
+  private Grid main_grid;
+  private SearchEntry search_entry;
+
   private static string word = null;
   private static const OptionEntry[] options = {
     { "word", 'w', 0, OptionArg.STRING, ref word,
@@ -52,6 +55,21 @@ public class Words.App : Gtk.Application {
     window = new ApplicationWindow (this);
     window.set_title (_("Words"));
     window.set_default_size (400, 600);
+    window.set_border_width (12);
+
+    main_grid = new Grid ();
+    main_grid.set_orientation (Orientation.VERTICAL);
+
+    search_entry = new SearchEntry ();
+    search_entry.set_hexpand (true);
+    main_grid.add (search_entry);
+
+    main_grid.show_all ();
+    window.add (main_grid);
+
+    search_entry.activate.connect (() => {
+	stdout.printf ("Will search %s\n", search_entry.get_text ());
+      });
   }
 
   public App() {
