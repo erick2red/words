@@ -36,6 +36,10 @@ public class Words.App : Gtk.Application {
     action.activate.connect (() => { window.destroy (); });
     this.add_action (action);
 
+    action = new GLib.SimpleAction ("about", null);
+    action.activate.connect (() => { show_about (); });
+    this.add_action (action);
+
     var builder = new Builder ();
     builder.set_translation_domain (Config.GETTEXT_PACKAGE);
     try {
@@ -87,5 +91,26 @@ public class Words.App : Gtk.Application {
     }
 
     return 0;
+  }
+
+  public void show_about () {
+    string[] authors = {
+      "Erick Pérez Castellanos <erick.red@gmail.com>"
+    };
+    string[] artists = {
+      "Allan Day <allanpday@gmail.com>"
+    };
+    Gtk.show_about_dialog (window,
+			   "artists", artists,
+			   "authors", authors,
+			   "translator-credits", _("translator-credits"),
+			   "program-name", _("Words"),
+			   "title", _("About Words"),
+			   "comments", _("Dictionary application for GNOME"),
+			   "license-type", Gtk.License.GPL_2_0,
+			   "logo-icon-name", "accessories-dictionary",
+			   "version", Config.PACKAGE_VERSION,
+			   "website", "https://github.com/erick2red/words",
+			   "wrap-license", true);
   }
 }

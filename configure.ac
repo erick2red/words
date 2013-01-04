@@ -1,5 +1,5 @@
 AC_PREREQ([2.68])
-AC_INIT([words],[0.1.0],[http://github.com/erick2red/words])
+AC_INIT([words],[0.1.0],[https://github.com/erick2red/words])
 AC_CONFIG_SRCDIR([src/main.vala])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
