@@ -22,7 +22,7 @@ using Gtk;
 public class Words.App : Gtk.Application {
   public static App app;
   public GLib.Settings settings;
-  public Window window;
+  public ApplicationWindow window;
 
   private static string word = null;
   private static const OptionEntry[] options = {
@@ -45,8 +45,7 @@ public class Words.App : Gtk.Application {
       warning ("Failed to parsing ui file");
     }
 
-    window = new Window (WindowType.TOPLEVEL);
-    window.set_application (this);
+    window = new ApplicationWindow (this);
     window.set_title (_("Words"));
     window.set_default_size (400, 600);
   }
