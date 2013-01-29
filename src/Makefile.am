@@ -16,6 +16,8 @@ AM_VALAFLAGS = \
 bin_PROGRAMS = gnome-words
 
 vala_sources = \
+	words-stardict-source.vala \
+	words-source.vala \
 	words-definition-box.vala \
 	words-app.vala \
 	main.vala \
