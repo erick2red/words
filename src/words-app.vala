@@ -26,6 +26,7 @@ public class Words.App : Gtk.Application {
 
   private Grid main_grid;
   private SearchEntry search_entry;
+  private DefinitionBox def_box;
 
   private static string word = null;
   private static const OptionEntry[] options = {
@@ -63,6 +64,15 @@ public class Words.App : Gtk.Application {
     search_entry = new SearchEntry ();
     search_entry.set_hexpand (true);
     main_grid.add (search_entry);
+
+    var scrolled_window = new ScrolledWindow (null, null);
+    scrolled_window.set_shadow_type (ShadowType.OUT);
+
+    def_box = new DefinitionBox ();
+    def_box.set_vexpand (true);
+
+    scrolled_window.add (def_box);
+    main_grid.add (scrolled_window);
 
     main_grid.show_all ();
     window.add (main_grid);

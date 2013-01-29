@@ -16,6 +16,7 @@ AM_VALAFLAGS = \
 bin_PROGRAMS = gnome-words
 
 vala_sources = \
+	words-definition-box.vala \
 	words-app.vala \
 	main.vala \
 	$(NULL)

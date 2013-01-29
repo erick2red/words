@@ -30,10 +30,13 @@ AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"], [Gettext Package])
 AC_SUBST(GETTEXT_PACKAGE)
 
 pkg_modules="gtk+-3.0
+	     gee-1.0
+	     webkitgtk-3.0
 	     "
+
 PKG_CHECK_MODULES(WORDS, [$pkg_modules])
 
-WORDS_PACKAGES="--pkg gtk+-3.0"
+WORDS_PACKAGES="--pkg gtk+-3.0 --pkg gee-1.0 --pkg webkitgtk-3.0"
 AC_SUBST(WORDS_PACKAGES)
 
 #############
