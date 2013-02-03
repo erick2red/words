@@ -1,0 +1,6 @@
+## TODO
+
+* Add created_at, updated_at columns to sources, dictionaries tables
+* Search in sqlite-docs for some methods to superload insert method to database;
+
+* Remove printf
