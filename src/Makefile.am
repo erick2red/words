@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 	$(NULL)
 
 AM_VALAFLAGS = \
-	--vapidir=$(srcdir)/../vapi --pkg config --pkg custom \
+	--vapidir=$(srcdir)/../vapi --pkg config --pkg custom --vapidir=$(srcdir)/../egg-list-box --pkg egglistbox \
 	@WORDS_PACKAGES@ \
 	$(NULL)
 

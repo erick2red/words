@@ -4,6 +4,7 @@ AC_CONFIG_SRCDIR([src/main.vala])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE
+
 # Enable silent rules is available
 AM_SILENT_RULES([yes])
 AM_MAINTAINER_MODE
@@ -29,10 +30,20 @@ GETTEXT_PACKAGE=words
 AC_DEFINE_UNQUOTED([GETTEXT_PACKAGE], ["$GETTEXT_PACKAGE"], [Gettext Package])
 AC_SUBST(GETTEXT_PACKAGE)
 
+# EggListBox submodule
+prev_top_build_prefix=$ac_top_build_prefix
+prev_ac_configure_args=$ac_configure_args
+AX_CONFIG_DIR([egg-list-box])
+ac_top_build_prefix=$prev_top_build_prefix
+ac_configure_args=$prev_ac_configure_args
+
+export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:"$ac_top_build_prefix"egg-list-box
+
 pkg_modules="gtk+-3.0
 	     gee-1.0
 	     webkitgtk-3.0
 	     sqlite3
+	     egg-list-box
 	     "
 
 PKG_CHECK_MODULES(WORDS, [$pkg_modules])

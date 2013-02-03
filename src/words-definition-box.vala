@@ -21,6 +21,6 @@ using WebKit;
 
 public class Words.DefinitionBox : WebView {
 	public DefinitionBox () {
-		stdout.printf ("Used subclass");
+		stdout.printf ("Used subclass\n");
 	}
 }

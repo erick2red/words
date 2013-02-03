@@ -96,7 +96,45 @@ public class Words.App : Gtk.Application {
   }
 
   private void manage_sources () {
-    ;
+    var dialog = new Dialog.with_buttons (_("Sources"),
+					  this.window,
+					  DialogFlags.MODAL,
+					  Stock.CLOSE, ResponseType.CLOSE);
+    dialog.set_default_size (300, 250);
+    var content_area = dialog.get_content_area ();
+
+    var scrolled = new ScrolledWindow(null, null);
+    scrolled.set_policy (PolicyType.NEVER, PolicyType.AUTOMATIC);
+    scrolled.set_vexpand (true);
+    scrolled.set_hexpand (true);
+    scrolled.set_shadow_type (ShadowType.OUT);
+
+    var sources_view = new Egg.ListBox ();
+    /* TODO: missing separator */
+    sources_view.set_selection_mode (SelectionMode.NONE);
+
+    sources_view.add_to_scrolled (scrolled);
+    sources_view.show_all ();
+    scrolled.set_no_show_all (true);
+
+    content_area.add (scrolled);
+
+    /* adding demo stuff */
+    for (int i = 0; i < 2; i++) {
+      var grid = new Grid ();
+      grid.add (new Label ("Boston Globe Dicts"));
+      var sw = new Switch ();
+      sw.set_hexpand (true);
+      sw.set_halign (Align.END);
+      grid.add (sw);
+
+      sources_view.add (grid);
+      grid.show_all ();
+    }
+
+    scrolled.show ();
+    dialog.run ();
+    dialog.destroy ();
   }
 
   private void import_dict () {

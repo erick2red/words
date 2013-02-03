@@ -1,5 +1,7 @@
+ACLOCAL_AMFLAGS = -I m4
+
 NULL=
-SUBDIRS = src vapi po
+SUBDIRS = egg-list-box src vapi po
 EXTRA_DIST = \
 	autogen.sh \
 	intltool-extract.in \
