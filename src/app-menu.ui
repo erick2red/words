@@ -2,6 +2,18 @@
   <menu id="app-menu">
     <section>
       <item>
+	<attribute name="action">app.import</attribute>
+	<attribute name="label" translatable="yes">_Import Dictionary</attribute>
+	<attribute name="accel">&lt;Primary&gt;i</attribute>
+      </item>
+      <item>
+	<attribute name="action">app.sources</attribute>
+	<attribute name="label" translatable="yes">Sources</attribute>
+	<attribute name="accel">&lt;Primary&gt;d</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
 	<attribute name="action">app.about</attribute>
 	<attribute name="label" translatable="yes">_About Words</attribute>
       </item>
@@ -9,7 +21,7 @@
 	<attribute name="action">app.quit</attribute>
 	<attribute name="label" translatable="yes">_Quit</attribute>
 	<attribute name="accel">&lt;Primary&gt;q</attribute>
-    </item>
+      </item>
     </section>
   </menu>
 </interface>

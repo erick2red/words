@@ -24,20 +24,33 @@ public class Words.App : Gtk.Application {
   public GLib.Settings settings;
   public ApplicationWindow window;
 
+  private StorageManager storage_manager;
+
   private Grid main_grid;
   private SearchEntry search_entry;
   private DefinitionBox def_box;
 
   private static string word = null;
+  private static string unimported = null;
   private static const OptionEntry[] options = {
     { "word", 'w', 0, OptionArg.STRING, ref word,
       N_("Search word"), null },
+    { "import", 'i', 0, OptionArg.STRING, ref unimported,
+      N_("Import dictionary"), null },
     { null }
   };
 
   private void create_window () {
     var action = new GLib.SimpleAction ("quit", null);
     action.activate.connect (() => { window.destroy (); });
+    this.add_action (action);
+
+    action = new GLib.SimpleAction ("import", null);
+    action.activate.connect (() => { import_dict (); });
+    this.add_action (action);
+
+    action = new GLib.SimpleAction ("sources", null);
+    action.activate.connect (() => { manage_sources (); });
     this.add_action (action);
 
     action = new GLib.SimpleAction ("about", null);
@@ -82,10 +95,44 @@ public class Words.App : Gtk.Application {
       });
   }
 
+  private void manage_sources () {
+    ;
+  }
+
+  private void import_dict () {
+    var dialog = new Gtk.FileChooserDialog (_("Select dictionary file or folder"),
+					    this.window,
+					    FileChooserAction.OPEN,
+					    Stock.CANCEL, ResponseType.CANCEL,
+					    Stock.OPEN, ResponseType.ACCEPT);
+    if (dialog.run () == ResponseType.ACCEPT) {
+      var f = dialog.get_file ();
+      stdout.printf ("Selected file was: %s\n", f.get_uri ());
+    }
+    dialog.destroy ();
+
+    int source_id;
+    if (this.storage_manager.create_source ("Larousse Biggest", true, out source_id))
+      stdout.printf ("Inserted source: %d\n", source_id);
+    if (this.storage_manager.create_source ("Brittanica Lessons", true, out source_id))
+      stdout.printf ("Inserted source: %d\n", source_id);
+    if (this.storage_manager.create_source ("Oxford Advanced Leaners", true, out source_id))
+      stdout.printf ("Inserted source: %d\n", source_id);
+
+    source_id = 1;
+    this.storage_manager.add_definition (source_id, "kitten", "a cute cat");
+    this.storage_manager.add_definition (source_id, "baby", "a human poppy");
+  }
+
   public App() {
     Object (application_id: "org.gnome.Words", flags: ApplicationFlags.HANDLES_COMMAND_LINE);
     app = this;
     settings = new GLib.Settings ("org.gnome.words");
+  }
+
+  public override void startup () {
+    this.storage_manager = new StorageManager ();
+    base.startup ();
   }
 
   public override void activate () {
@@ -115,8 +162,11 @@ public class Words.App : Gtk.Application {
     activate ();
 
     if (word != null) {
-      stdout.printf ("Will match the word: %s", word);
+      stdout.printf ("Will match the word: %s\n", word);
     }
+
+    if (unimported != null)
+      stdout.printf ("will import from : %s\n", unimported);
 
     return 0;
   }
