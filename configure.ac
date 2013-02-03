@@ -32,11 +32,12 @@ AC_SUBST(GETTEXT_PACKAGE)
 pkg_modules="gtk+-3.0
 	     gee-1.0
 	     webkitgtk-3.0
+	     sqlite3
 	     "
 
 PKG_CHECK_MODULES(WORDS, [$pkg_modules])
 
-WORDS_PACKAGES="--pkg gtk+-3.0 --pkg gee-1.0 --pkg webkitgtk-3.0"
+WORDS_PACKAGES="--pkg gtk+-3.0 --pkg gee-1.0 --pkg webkitgtk-3.0 --pkg sqlite3"
 AC_SUBST(WORDS_PACKAGES)
 
 #############
