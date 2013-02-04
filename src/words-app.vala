@@ -1,4 +1,4 @@
-/* -*- Mode: vala; indent-tabs-mode: t; c-basic-offset: 2; tab-width: 8 -*- */
+/* -*- Mode: vala; indent-tabs-mode: nil; c-basic-offset: 2; tab-width: 8 -*- */
 /*
  * Copyright (C) 2011 Erick Pérez Castellanos <erick.red@gmail.com>
  *
@@ -91,7 +91,7 @@ public class Words.App : Gtk.Application {
     window.add (main_grid);
 
     search_entry.activate.connect (() => {
-	stdout.printf ("Will search %s\n", search_entry.get_text ());
+        stdout.printf ("Will search %s\n", search_entry.get_text ());
       });
   }
 
@@ -103,10 +103,10 @@ public class Words.App : Gtk.Application {
 
   private void import_dict () {
     var dialog = new Gtk.FileChooserDialog (_("Select dictionary file or folder"),
-					    this.window,
-					    FileChooserAction.OPEN,
-					    Stock.CANCEL, ResponseType.CANCEL,
-					    Stock.OPEN, ResponseType.ACCEPT);
+                                            this.window,
+                                            FileChooserAction.OPEN,
+                                            Stock.CANCEL, ResponseType.CANCEL,
+                                            Stock.OPEN, ResponseType.ACCEPT);
     if (dialog.run () == ResponseType.ACCEPT) {
       var f = dialog.get_file ();
       stdout.printf ("Selected file was: %s\n", f.get_uri ());
@@ -181,16 +181,16 @@ public class Words.App : Gtk.Application {
       "Allan Day <allanpday@gmail.com>"
     };
     Gtk.show_about_dialog (window,
-			   "artists", artists,
-			   "authors", authors,
-			   "translator-credits", _("translator-credits"),
-			   "program-name", _("Words"),
-			   "title", _("About Words"),
-			   "comments", _("Dictionary application for GNOME"),
-			   "license-type", Gtk.License.GPL_2_0,
-			   "logo-icon-name", "accessories-dictionary",
-			   "version", Config.PACKAGE_VERSION,
-			   "website", "https://github.com/erick2red/words",
-			   "wrap-license", true);
+                           "artists", artists,
+                           "authors", authors,
+                           "translator-credits", _("translator-credits"),
+                           "program-name", _("Words"),
+                           "title", _("About Words"),
+                           "comments", _("Dictionary application for GNOME"),
+                           "license-type", Gtk.License.GPL_2_0,
+                           "logo-icon-name", "accessories-dictionary",
+                           "version", Config.PACKAGE_VERSION,
+                           "website", "https://github.com/erick2red/words",
+                           "wrap-license", true);
   }
 }

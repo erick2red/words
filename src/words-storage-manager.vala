@@ -1,4 +1,4 @@
-/* -*- Mode: vala; indent-tabs-mode: t; c-basic-offset: 2; tab-width: 8 -*- */
+/* -*- Mode: vala; indent-tabs-mode: nil; c-basic-offset: 2; tab-width: 8 -*- */
 /*
  * Copyright (C) 2011 Erick Pérez Castellanos <erick.red@gmail.com>
  *
@@ -21,7 +21,7 @@ using Gee;
 using Sqlite;
 
 static const string schema =
-"""CREATE TABLE "sources" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar(255), "enabled" integer);
+  """CREATE TABLE "sources" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar(255), "enabled" integer);
 CREATE TABLE "dictionaries" ("source_id" integer NOT NULL, "word" varchar(255), "definition" varchar(255));
 CREATE UNIQUE INDEX "index_sources_on_id" ON "sources" ("id");
 CREATE UNIQUE INDEX "index_sources_on_name" ON "sources" ("name");
@@ -43,7 +43,7 @@ public class Words.StorageManager : Object {
       string err;
       result = this.db_handler.exec (schema, null, out err);
       if (result != 0)
-	stdout.printf ("There were some error loading schema: %s\n", err);
+        stdout.printf ("There were some error loading schema: %s\n", err);
     }
   }
 
@@ -78,15 +78,15 @@ public class Words.StorageManager : Object {
     int nr_row, nr_column;
     if (this.db_handler.get_table (stmt, out results, out nr_row, out nr_column, out err) == 0) {
       if (results.length > 0) {
-	int rowid = int.parse (results[2]);
-	string new_definition = results[3] + "\n" + definition;
-	stmt = "UPDATE dictionaries SET definition='%s' WHERE rowid=%d".printf (new_definition, rowid);
-	if (this.db_handler.exec (stmt, null, out err) != 0)
-	  stdout.printf ("Something happened: %s\n", err);
+        int rowid = int.parse (results[2]);
+        string new_definition = results[3] + "\n" + definition;
+        stmt = "UPDATE dictionaries SET definition='%s' WHERE rowid=%d".printf (new_definition, rowid);
+        if (this.db_handler.exec (stmt, null, out err) != 0)
+          stdout.printf ("Something happened: %s\n", err);
       } else {
-	stmt = "INSERT INTO dictionaries (source_id, word, definition) VALUES (%d, '%s', '%s')".printf (source_id, word, definition);
-	if (this.db_handler.exec (stmt, null, out err) != 0)
-	  stdout.printf ("Something happened: %s\n", err);
+        stmt = "INSERT INTO dictionaries (source_id, word, definition) VALUES (%d, '%s', '%s')".printf (source_id, word, definition);
+        if (this.db_handler.exec (stmt, null, out err) != 0)
+          stdout.printf ("Something happened: %s\n", err);
       }
     }
   }
