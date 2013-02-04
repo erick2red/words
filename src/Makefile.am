@@ -28,7 +28,6 @@ vala_sources = \
 
 gsettingsschema_in_files = org.gnome.words.gschema.xml.in
 gsettings_SCHEMAS = $(gsettingsschema_in_files:.xml.in=.xml)
-.PRECIOUS: $(gsettings_SCHEMAS)
 
 @INTLTOOL_XML_NOMERGE_RULE@
 
