@@ -17,10 +17,8 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-using Gee;
+public interface Words.SourceLoader : Object {
+  public abstract bool open (string source_path);
 
-public interface Words.Source : Object {
-  public abstract string get_definition (string word);
-
-  public abstract ArrayList<string> get_matches (string word);
+  public abstract void load (StorageManager storage_manager);
 }

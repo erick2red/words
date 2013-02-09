@@ -28,7 +28,8 @@ CREATE UNIQUE INDEX "index_sources_on_name" ON "sources" ("name");
 """;
 
 public class Words.StorageManager : Object {
-  private Database db_handler;
+  Database db_handler;
+  Statement add_word_stmt;
 
   public StorageManager () {
     var db_filename = Words.get_user_pkgdata ("words.db");
@@ -45,49 +46,95 @@ public class Words.StorageManager : Object {
       if (result != 0)
         stdout.printf ("There were some error loading schema: %s\n", err);
     }
+
+    result = this.db_handler.prepare_v2 ("INSERT INTO dictionaries VALUES (@i, @word, @def)",
+                                         -1,
+                                         out this.add_word_stmt);
+    if (result != Sqlite.OK)
+      stdout.printf ("Something happened: %s\n", this.db_handler.errmsg ());
   }
 
-  public bool create_source (string name, bool enabled, out int source_id) {
-    var stmt = "INSERT INTO sources (name, enabled) VALUES ('%s', %d)".printf (name, enabled ? 1 : 0);
+  /**
+   * Inserts a source into db.
+   * @name The source name
+   * @enabled if it's enable or not
+   *
+   * @return -1 on fail, the source_id otherwise
+   */
+  public int create_source (string name, bool enabled) {
+    /* escaping */
+    var escaped_name = escape_quote (name);
+    var stmt = "INSERT INTO sources (name, enabled) VALUES ('%s', %d)".printf (escaped_name, enabled ? 1 : 0);
+
     string err;
-    source_id = 0;
     if (this.db_handler.exec (stmt, null, out err) != 0) {
       stdout.printf ("Something happened: %s\n", err);
-      return false;
+      return -1;
     } else {
-      stmt = "SELECT id FROM sources WHERE name='%s'".printf (name);
+      stmt = "SELECT id FROM sources WHERE name='%s'".printf (escaped_name);
       string [] results;
       int nr_row, nr_column;
       this.db_handler.get_table (stmt, out results, out nr_row, out nr_column);
 
       /* it should always be one so */
-      source_id = int.parse (results[1]);
-      return true;
+      return int.parse (results[1]);
     }
+  }
+
+  public void set_enable_source (int source_id, bool enabled) {
+    ;
   }
 
   public void fill_source (int source_id, HashMap<string, string> data) {
     ;
   }
 
+  /**
+   * This method and its pair below will act as block delimitiers
+   * for insertings definitions into db. These will call "BEGIN/END TRANSACTION"
+   * accordingly. The should be used like this:
+   * {{{
+   *   my_db.start_insertions ();
+   *   foreach (var s in list) {
+   *     my_db.add_definition (source_id, s, def[s]);
+   *   }
+   *   my_db.end_insertions ();
+   * }}}
+   */
+  public void start_insertions () {
+    this.db_handler.exec ("BEGIN TRANSACTION");
+  }
+
+  public void end_insertions () {
+    this.db_handler.exec ("END TRANSACTION");
+  }
+
+  /**
+   * Called to add a new word plus definition into a source.
+   * This method will assume there's no record for that word into the database.
+   * If there's row for that word into the database, will fail silently.
+   *
+   * @param source_id Id of the source where the word will be added
+   * @param word Word for the defintion will be added
+   * @param definition Well, definition
+   */
   public void add_definition (int source_id, string word, string definition) {
-    /* definitions are appended */
-    var stmt = "SELECT rowid,definition FROM dictionaries WHERE source_id=%d and word='%s'".printf (source_id, word);
-    string err;
-    string [] results;
-    int nr_row, nr_column;
-    if (this.db_handler.get_table (stmt, out results, out nr_row, out nr_column, out err) == 0) {
-      if (results.length > 0) {
-        int rowid = int.parse (results[2]);
-        string new_definition = results[3] + "\n" + definition;
-        stmt = "UPDATE dictionaries SET definition='%s' WHERE rowid=%d".printf (new_definition, rowid);
-        if (this.db_handler.exec (stmt, null, out err) != 0)
-          stdout.printf ("Something happened: %s\n", err);
-      } else {
-        stmt = "INSERT INTO dictionaries (source_id, word, definition) VALUES (%d, '%s', '%s')".printf (source_id, word, definition);
-        if (this.db_handler.exec (stmt, null, out err) != 0)
-          stdout.printf ("Something happened: %s\n", err);
-      }
+    var escaped_word = escape_quote (word);
+    var escaped_definition = escape_quote (definition);
+
+    add_word_stmt.bind_int (1, source_id);
+    add_word_stmt.bind_text (2, escaped_word);
+    add_word_stmt.bind_text (3, escaped_definition);
+
+    add_word_stmt.step ();
+    add_word_stmt.clear_bindings ();
+    add_word_stmt.reset ();
+  }
+
+  string escape_quote (string str) {
+    if (str.contains ("'")) {
+      return str.replace ("'", "''");
     }
+    return str;
   }
 }

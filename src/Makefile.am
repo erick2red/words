@@ -17,9 +17,9 @@ bin_PROGRAMS = gnome-words
 
 vala_sources = \
 	words-utils.vala \
-	words-stardict-source.vala \
 	words-sources-dialog.vala \
-	words-source.vala \
+	words-source-loader.vala \
+	words-stardict-loader.vala \
 	words-definition-box.vala \
 	words-storage-manager.vala \
 	words-app.vala \

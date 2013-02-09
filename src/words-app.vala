@@ -102,28 +102,38 @@ public class Words.App : Gtk.Application {
   }
 
   private void import_dict () {
+    /* FIXME: this dialog should open gzip files, not anything else */
     var dialog = new Gtk.FileChooserDialog (_("Select dictionary file or folder"),
                                             this.window,
-                                            FileChooserAction.OPEN,
+                                            FileChooserAction.SELECT_FOLDER,
                                             Stock.CANCEL, ResponseType.CANCEL,
                                             Stock.OPEN, ResponseType.ACCEPT);
     if (dialog.run () == ResponseType.ACCEPT) {
       var f = dialog.get_file ();
       stdout.printf ("Selected file was: %s\n", f.get_uri ());
+
+      var loader = new StardictSourceLoader ();
+      if (loader.open (f.get_path ())) {
+        stdout.printf ("Opened source from stardict\n");
+        loader.load (storage_manager);
+      } else {
+        dialog.destroy ();
+        return;
+      }
     }
     dialog.destroy ();
 
-    int source_id;
-    if (this.storage_manager.create_source ("Larousse Biggest", true, out source_id))
-      stdout.printf ("Inserted source: %d\n", source_id);
-    if (this.storage_manager.create_source ("Brittanica Lessons", true, out source_id))
-      stdout.printf ("Inserted source: %d\n", source_id);
-    if (this.storage_manager.create_source ("Oxford Advanced Leaners", true, out source_id))
-      stdout.printf ("Inserted source: %d\n", source_id);
+    // int source_id;
+    // if (this.storage_manager.create_source ("Larousse Biggest", true, out source_id))
+    //   stdout.printf ("Inserted source: %d\n", source_id);
+    // if (this.storage_manager.create_source ("Brittanica Lessons", true, out source_id))
+    //   stdout.printf ("Inserted source: %d\n", source_id);
+    // if (this.storage_manager.create_source ("Oxford Advanced Leaners", true, out source_id))
+    //   stdout.printf ("Inserted source: %d\n", source_id);
 
-    source_id = 1;
-    this.storage_manager.add_definition (source_id, "kitten", "a cute cat");
-    this.storage_manager.add_definition (source_id, "baby", "a human poppy");
+    // source_id = 1;
+    // this.storage_manager.add_definition (source_id, "kitten", "a cute cat");
+    // this.storage_manager.add_definition (source_id, "baby", "a human poppy");
   }
 
   public App() {
